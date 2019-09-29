@@ -80,7 +80,7 @@ void Game::update(sf::Time t_deltaTime)
 		playerDrone.inputCode();
 
 		if (playerDrone.target.coordinates.x == 0 &&
-			playerDrone.target.coordinates.y == 0)
+			playerDrone.target.coordinates.y == 0 && playerDrone.armed)
 		{
 			std::cout << "You blew yourself up... GAME OVER.";
 			gameState = GameState::QUIT;
