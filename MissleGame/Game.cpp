@@ -81,23 +81,40 @@ void Game::update(sf::Time t_deltaTime)
 
 		if (playerDrone.armed)
 		{
-			playerDrone.update(enemies, MAX_ENEMIES);
+			playerDrone.update(enemies, friendlies, MAX_ENEMIES);
 		}
 
-		int aliveCheck = 0;
+		int enemyAliveCheck = 0;
+		int friendlyAliveCheck = 0;
 
 		for (int i = 0; i < MAX_ENEMIES; i++)
 		{
 
 			if (!enemies[i].alive)
 			{
-				aliveCheck++;
+				enemyAliveCheck++;
+			}
+
+			if (!friendlies[i].alive)
+			{
+				friendlyAliveCheck++;
 			}
 		}
-
-		if (aliveCheck == MAX_ENEMIES)
+		// let the player win even if they killed all friendlies and enemies in the same run
+		if (enemyAliveCheck == MAX_ENEMIES && friendlyAliveCheck == MAX_ENEMIES)
 		{
+			std::cout << "All enemies and friendlies are killed." << std::endl;
+			std::cout << "Casualties are expected in this line of work. Good job.";
+			gameState = GameState::QUIT;
+		} 
+		else if (enemyAliveCheck == MAX_ENEMIES)
+		{ // otherwise if all enemies are killed, let them win
 			std::cout << "All enemies defeated. Good work." << std::endl;
+			gameState = GameState::QUIT;
+		}
+		else if (friendlyAliveCheck == MAX_ENEMIES)
+		{ // finally if all friendlies are killed, but not all enemies, they lose.
+			std::cout << "All friendlies dead. You're the last one left..." << std::endl;
 			gameState = GameState::QUIT;
 		}
 	}

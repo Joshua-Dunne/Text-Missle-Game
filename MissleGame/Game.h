@@ -35,7 +35,7 @@ private:
 	Missle playerDrone;
 	int const static MAX_ENEMIES = 3;
 	Target enemies[MAX_ENEMIES]{ {0,5}, {0,6}, {7,9} };
-	//Target friendlies[3];
+	Target friendlies[MAX_ENEMIES]{ {5,0},{6,0}, {7,0} };
 
 };
 
