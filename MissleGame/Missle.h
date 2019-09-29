@@ -10,9 +10,12 @@ struct Missle
 	Coordinates coordinates;
 	Target target;
 	bool armed = false;
+	bool noRemainingWarheads = false;
 	int explosiveCode = 1234;
 	int nuclearCode = 2345;
 	int userCode = 0;
+	int numberOfExplosives = 1;
+	int numberOfNuclears = 1;
 
 	void choosePayload();
 	void inputCode();

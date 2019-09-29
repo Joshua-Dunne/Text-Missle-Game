@@ -76,53 +76,114 @@ void Game::update(sf::Time t_deltaTime)
 	while (gameState == GameState::GAMEPLAY)
 	{
 		playerDrone.choosePayload();
-		playerDrone.choosePosition();
-		playerDrone.inputCode();
 
-		if (playerDrone.target.coordinates.x == 0 &&
-			playerDrone.target.coordinates.y == 0 && playerDrone.armed)
+		// make sure that the warhead the player chose is still available
+		if (!playerDrone.noRemainingWarheads)
 		{
-			std::cout << "You blew yourself up... GAME OVER.";
-			gameState = GameState::QUIT;
-			break;
+			playerDrone.choosePosition();
+			playerDrone.inputCode();
+
+			if (secretCheck())
+			{
+				break;
+			}
+
+			if (playerDrone.armed)
+			{
+				playerDrone.update(enemies, friendlies, MAX_ENEMIES);
+			}
 		}
-		if (playerDrone.armed)
+		
+
+		clearCheck();
+	}
+}
+
+/// <summary>
+/// See if the player had a great idea to blow themselves up.
+/// </summary>
+/// <returns>If the player has lost through blowing themselves up.</returns>
+bool Game::secretCheck()
+{
+	bool hasLost = false;
+
+	if (playerDrone.target.coordinates.x == 0 &&
+		playerDrone.target.coordinates.y == 0 && playerDrone.armed)
+	{
+		std::cout << "You blew yourself up... GAME OVER.";
+		gameState = GameState::QUIT;
+		hasLost = true;
+	}
+
+	return hasLost;
+}
+
+/// <summary>
+/// See if the player has won or lost yet
+/// </summary>
+void Game::clearCheck()
+{
+	int enemyAliveCheck = 0;
+	int friendlyAliveCheck = 0;
+
+	for (int i = 0; i < MAX_ENEMIES; i++)
+	{
+
+		if (!enemies[i].alive)
 		{
-			playerDrone.update(enemies, friendlies, MAX_ENEMIES);
+			enemyAliveCheck++;
 		}
 
-		int enemyAliveCheck = 0;
-		int friendlyAliveCheck = 0;
+		if (!friendlies[i].alive)
+		{
+			friendlyAliveCheck++;
+		}
+	}
+
+	// if the player runs out of warheads, they lose
+	if (playerDrone.numberOfExplosives == 0
+		&& playerDrone.numberOfNuclears == 0)
+	{
+		int aliveEnemies = 0;
+		int aliveFriendlies = 0;
 
 		for (int i = 0; i < MAX_ENEMIES; i++)
 		{
-
-			if (!enemies[i].alive)
+			// check to see if the enemy we are attacking is alive first
+			if (enemies[i].alive)
 			{
-				enemyAliveCheck++;
+				aliveEnemies++;
 			}
 
-			if (!friendlies[i].alive)
+			if (friendlies[i].alive)
 			{
-				friendlyAliveCheck++;
+				aliveFriendlies++;
 			}
 		}
-		// let the player win even if they killed all friendlies and enemies in the same run
-		if (enemyAliveCheck == MAX_ENEMIES && friendlyAliveCheck == MAX_ENEMIES)
-		{
-			std::cout << "All enemies and friendlies are killed." << std::endl;
-			std::cout << "Casualties are expected in this line of work. Good job.";
-			gameState = GameState::QUIT;
-		} 
-		else if (enemyAliveCheck == MAX_ENEMIES)
-		{ // otherwise if all enemies are killed, let them win
-			std::cout << "All enemies defeated. Good work." << std::endl;
-			gameState = GameState::QUIT;
-		}
-		else if (friendlyAliveCheck == MAX_ENEMIES)
-		{ // finally if all friendlies are killed, but not all enemies, they lose.
-			std::cout << "All friendlies dead. You're the last one left..." << std::endl;
-			gameState = GameState::QUIT;
-		}
+
+		std::cout << "You are out of Warheads." << std::endl;
+		std::cout << "You didn't complete your mission..." << std::endl;
+		std::cout << "Remaining Enemies: " << aliveEnemies << std::endl;
+		std::cout << "Remaining Friendlies: " << aliveFriendlies << std::endl << std::endl;
+		gameState = GameState::QUIT;
 	}
+	// let the player win even if they killed all friendlies and enemies in the same run
+	if (enemyAliveCheck == MAX_ENEMIES && friendlyAliveCheck == MAX_ENEMIES)
+	{
+		std::cout << "All enemies and friendlies are killed." << std::endl;
+		std::cout << "Casualties are expected in this line of work. Good job.";
+		gameState = GameState::QUIT;
+	}
+	else if (enemyAliveCheck == MAX_ENEMIES)
+	{ // otherwise if all enemies are killed, let them win
+		std::cout << "All enemies defeated. Good work." << std::endl;
+		gameState = GameState::QUIT;
+	}
+	else if (friendlyAliveCheck == MAX_ENEMIES)
+	{ // finally if all friendlies are killed, but not all enemies, they lose.
+		std::cout << "All friendlies dead. You're the last one left..." << std::endl;
+		gameState = GameState::QUIT;
+	}
+
+	playerDrone.noRemainingWarheads = false; // reset so player can choose another warhead
 }

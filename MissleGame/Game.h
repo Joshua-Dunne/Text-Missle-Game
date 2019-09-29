@@ -24,6 +24,8 @@ public:
 
 private:
 	void update(sf::Time t_deltaTime);
+	void clearCheck();
+	bool secretCheck();
 
 	sf::RenderWindow m_window; // main SFML window
 	bool m_exitGame; // control exiting game

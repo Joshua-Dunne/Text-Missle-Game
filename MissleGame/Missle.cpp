@@ -13,6 +13,8 @@ void Missle::choosePayload()
 		std::cout << "Explosives will destroy anything the Drone goes over." << std::endl;
 		std::cout << "Nuclear will only destroy the target location,";
 		std::cout << " but it will also destroy surrounding areas." << std::endl << std::endl;
+		std::cout << "You have " << numberOfExplosives << " explosives remaining." << std::endl;
+		std::cout << "You have " << numberOfNuclears << " nukes remaining." << std::endl;
 
 		while (choice != 0 && choice != 1)
 		{
@@ -22,6 +24,20 @@ void Missle::choosePayload()
 			if (choice != 0 && choice != 1)
 			{
 				std::cout << "Incorrect choice given." << std::endl << std::endl;
+			}
+
+			if (choice == static_cast<int>(WarHead::EXPLOSIVE)
+				&& numberOfExplosives == 0)
+			{
+				std::cout << "No Explosive Warheads left." << std::endl << std::endl;
+				noRemainingWarheads = true;
+			}
+
+			if (choice == static_cast<int>(WarHead::NUCLEAR)
+				&& numberOfNuclears == 0)
+			{
+				std::cout << "No Nuclear Warheads left." << std::endl << std::endl;
+				noRemainingWarheads = true;
 			}
 		}
 
@@ -59,7 +75,10 @@ void Missle::arm()
 	if (payload == WarHead::EXPLOSIVE)
 	{
 		if (userCode == explosiveCode)
+		{
 			armed = true;
+			numberOfExplosives--;
+		}
 		else
 		{
 			armed = false;
@@ -69,7 +88,10 @@ void Missle::arm()
 	else if (payload == WarHead::NUCLEAR)
 	{
 		if (userCode == nuclearCode)
+		{
 			armed = true;
+			numberOfNuclears--;
+		}
 		else
 		{
 			armed = false;
@@ -80,6 +102,7 @@ void Missle::arm()
 	{
 		std::cout << "Explosive choice incorrect." << std::endl;
 	}
+
 
 
 }
@@ -123,7 +146,7 @@ void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_T
 		coordinates.y != target.coordinates.y) // make sure the drone doesn't go outside the range
 	{
 		if ((coordinates.x <= 10 && coordinates.y <= 10)
-			&& (target.coordinates.x > 0 && target.coordinates.y > 0))
+			&& (target.coordinates.x >= 0 && target.coordinates.y >= 0))
 		{
 			if (coordinates.x != target.coordinates.x)
 			{
