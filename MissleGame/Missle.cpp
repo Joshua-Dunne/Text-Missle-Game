@@ -91,7 +91,7 @@ void Missle::choosePosition()
 	int choiceX = -1;
 	int choiceY = -1;
 
-	while (choiceX < 0 || choiceX > 10)
+	while (choiceX < 0 || choiceX > 10 && choiceY < 0 || choiceY > 10)
 	{
 		std::cout << "Drones can go to a Max of 10X and 10Y, and min of 0X, 0Y." << std::endl;
 		std::cout << "Please take care to not go outside the range." << std::endl;
