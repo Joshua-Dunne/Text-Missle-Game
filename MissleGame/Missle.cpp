@@ -10,6 +10,9 @@ void Missle::choosePayload()
 
 		std::cout << "Each Payload has a launch code. This code is needed to arm the payload." << std::endl;
 		std::cout << "Please refer to your manual for the launch codes." << std::endl;
+		std::cout << "Explosives will destroy anything the Drone goes over." << std::endl;
+		std::cout << "Nuclear will only destroy the target location,";
+		std::cout << " but it will also destroy surrounding areas." << std::endl << std::endl;
 
 		while (choice != 0 && choice != 1)
 		{
@@ -86,23 +89,21 @@ void Missle::arm()
 /// </summary>
 void Missle::choosePosition()
 {
+	// reset drone's position for next potential move
 	coordinates.x = 0;
 	coordinates.y = 0;
+
 	int choiceX = -1;
 	int choiceY = -1;
 
-	while (choiceX < 0 || choiceX > 10 && choiceY < 0 || choiceY > 10)
-	{
-		std::cout << "Drones can go to a Max of 10X and 10Y, and min of 0X, 0Y." << std::endl;
-		std::cout << "Please take care to not go outside the range." << std::endl;
-		std::cout << "Please enter X Co-ordinate: ";
-		std::cin >> choiceX;
-		std::cout << std::endl;
-		std::cout << "Please enter y Co-ordinate: ";
-		std::cin >> choiceY;
-		std::cout << std::endl;
-	}
-
+	std::cout << "Drones can go to a Max of 10X and 10Y, and min of 0X, 0Y." << std::endl;
+	std::cout << "Please take care to not go outside the range." << std::endl;
+	std::cout << "Please enter X Co-ordinate: ";
+	std::cin >> choiceX;
+	std::cout << std::endl;
+	std::cout << "Please enter y Co-ordinate: ";
+	std::cin >> choiceY;
+	std::cout << std::endl;
 
 	target.coordinates.x = choiceX;
 	target.coordinates.y = choiceY;
@@ -119,24 +120,37 @@ void Missle::choosePosition()
 void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_TARGETS)
 {
 	while (coordinates.x != target.coordinates.x ||
-		coordinates.y != target.coordinates.y)
+		coordinates.y != target.coordinates.y) // make sure the drone doesn't go outside the range
 	{
-		if (coordinates.x != target.coordinates.x)
+		if ((coordinates.x <= 10 && coordinates.y <= 10)
+			&& (target.coordinates.x > 0 && target.coordinates.y > 0))
 		{
-			coordinates.x++;
-		}
+			if (coordinates.x != target.coordinates.x)
+			{
+				coordinates.x++;
+			}
 
-		if (coordinates.y != target.coordinates.y)
+			if (coordinates.y != target.coordinates.y)
+			{
+				coordinates.y++;
+			}
+
+			checkCollision(t_enemies, t_friendlies, t_MAX_TARGETS);
+		}
+		else
 		{
-			coordinates.y++;
+			std::cout << "**************************************************" << std::endl;
+			std::cout << "Drone went outside of range. Bombs disarmed. Returning to base..." << std::endl;
+			std::cout << "**************************************************" << std::endl << std::endl;
+			armed = false;
+			break;
 		}
-
-		checkCollision(t_enemies, t_friendlies, t_MAX_TARGETS);
+		
 	}
 
-	if (coordinates.x == target.coordinates.x)
+	if (coordinates.x == target.coordinates.x && armed)
 	{
-		if (coordinates.y == target.coordinates.y)
+		if (coordinates.y == target.coordinates.y && armed)
 		{
 			std::cout << "Attack finished. Returning to base." << std::endl;;
 			std::cout << std::endl;
@@ -155,7 +169,7 @@ void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_T
 /// <param name="t_MAX_ENEMIES"></param>
 void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const t_MAX_TARGETS)
 {
-	if (payload == WarHead::EXPLOSIVE)
+	if (payload == WarHead::EXPLOSIVE && armed)
 	{
 		for (int i = 0; i < t_MAX_TARGETS; i++)
 		{
@@ -189,7 +203,7 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 		}
 	}
 
-	if (payload == WarHead::NUCLEAR)
+	if (payload == WarHead::NUCLEAR && armed)
 	{
 		if (coordinates.x == target.coordinates.x)
 		{
