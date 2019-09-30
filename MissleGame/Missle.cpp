@@ -237,14 +237,9 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 				{
 					if (t_enemies[i].alive)
 					{
-						if (t_enemies[i].coordinates.x == target.coordinates.x + 1)
-						{
-							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
-								<< t_enemies[i].coordinates.y << std::endl;
-							t_enemies[i].alive = false;
-							continue;
-						}
-						else if (t_enemies[i].coordinates.x == target.coordinates.x - 1)
+						// check the area we're attacking first
+						if (t_enemies[i].coordinates.x == target.coordinates.x
+							&& t_enemies[i].coordinates.y == target.coordinates.y)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
@@ -252,14 +247,18 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 							continue;
 						}
 
-						if (t_enemies[i].coordinates.y == target.coordinates.y + 1)
+						// then check surrounding areas
+						if (t_enemies[i].coordinates.x == target.coordinates.x + 1
+							|| t_enemies[i].coordinates.x == target.coordinates.x - 1)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
 							t_enemies[i].alive = false;
 							continue;
 						}
-						else if (t_enemies[i].coordinates.y == target.coordinates.y - 1)
+
+						if (t_enemies[i].coordinates.y == target.coordinates.y + 1
+							|| t_enemies[i].coordinates.y == target.coordinates.y - 1)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
@@ -270,16 +269,27 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 
 					if (t_friendlies[i].alive)
 					{
+						// check the area we're attacking first
+						if (t_friendlies[i].coordinates.x == target.coordinates.x
+							&& t_friendlies[i].coordinates.y == target.coordinates.y)
+						{
+							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
+								<< t_friendlies[i].coordinates.y << std::endl;
+							t_friendlies[i].alive = false;
+							continue;
+						}
+
+						// then check surrounding areas
 						if (t_friendlies[i].coordinates.x == target.coordinates.x + 1)
 						{
-							std::cout << "Enemy hit at " << t_friendlies[i].coordinates.x << ", "
+							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
 						}
 						else if (t_friendlies[i].coordinates.x == target.coordinates.x - 1)
 						{
-							std::cout << "Enemy hit at " << t_friendlies[i].coordinates.x << ", "
+							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
@@ -287,14 +297,14 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 
 						if (t_friendlies[i].coordinates.y == target.coordinates.y + 1)
 						{
-							std::cout << "Enemy hit at " << t_friendlies[i].coordinates.x << ", "
+							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
 						}
 						else if (t_friendlies[i].coordinates.y == target.coordinates.y - 1)
 						{
-							std::cout << "Enemy hit at " << t_friendlies[i].coordinates.x << ", "
+							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
