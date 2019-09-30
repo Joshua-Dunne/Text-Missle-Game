@@ -7,7 +7,7 @@
 #include "Game.h"
 #include <iostream>
 
-Game::Game() 
+Game::Game()
 {
 	m_exitGame = false;
 }
@@ -21,7 +21,7 @@ void Game::run()
 {	
 	while (gameState != GameState::QUIT)
 	{
-		update(); //60 fps
+		update(); // while we're playing the game (not done with it) update everything
 	}
 }
 
@@ -43,15 +43,15 @@ void Game::update()
 			std::cin >> choice;
 			std::cout << std::endl;
 
-			if (choice == 1)
+			if (choice == 1) // if they don't want to play, end the game
 			{
 				gameState = GameState::QUIT;
 			}
-			else if (choice == 2)
+			else if (choice == 2) // if they want to play, go into the game
 			{
 				gameState = GameState::GAMEPLAY;
 			}
-			else
+			else // if they put anything else in, reloop
 			{
 				std::cout << "Incorrect number given." << std::endl << std::endl;
 			}
@@ -60,27 +60,26 @@ void Game::update()
 
 	while (gameState == GameState::GAMEPLAY)
 	{
-		playerDrone.choosePayload();
+		playerDrone.choosePayload(); // get the player to choose a warhead
 
 		// make sure that the warhead the player chose is still available
 		if (!playerDrone.noRemainingWarheads)
 		{
-			playerDrone.choosePosition();
-			playerDrone.inputCode();
+			playerDrone.choosePosition(); // get the player to choose a target
 
 			if (secretCheck())
 			{
-				break;
+				break; // if the player blows themselves up...
 			}
 
-			if (playerDrone.armed)
+			if (playerDrone.armed) // if the drone is ready to fire
 			{
-				playerDrone.update(enemies, friendlies, MAX_ENEMIES);
-			}
+				playerDrone.update(enemies, friendlies, MAX_ENEMIES); // fire away
+			} // otherwise just go back around the loop
 		}
 		
 
-		clearCheck();
+		clearCheck(); // see if the player has won/lost
 	}
 }
 
