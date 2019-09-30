@@ -12,7 +12,7 @@
 /// 28/09/19
 /// </summary>
 
-class Game
+struct Game
 {
 public:
 	Game();
