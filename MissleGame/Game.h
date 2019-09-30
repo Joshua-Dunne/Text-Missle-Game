@@ -23,7 +23,7 @@ public:
 	void run();
 
 private:
-	void update(sf::Time t_deltaTime);
+	void update();
 	void clearCheck();
 	bool secretCheck();
 
