@@ -13,8 +13,8 @@ void Missle::choosePayload()
 		std::cout << "Explosives will destroy anything the Drone goes over." << std::endl;
 		std::cout << "Nuclear will only destroy the target location,";
 		std::cout << " but it will also destroy surrounding areas." << std::endl << std::endl;
-		std::cout << "You have " << numberOfExplosives << " explosives remaining." << std::endl;
-		std::cout << "You have " << numberOfNuclears << " nukes remaining." << std::endl;
+		std::cout << "You have " << m_numberOfExplosives << " explosives remaining." << std::endl;
+		std::cout << "You have " << m_numberOfNuclears << " nukes remaining." << std::endl;
 
 		while (choice != 0 && choice != 1)
 		{ // make sure the player only choose 0 or 1
@@ -27,23 +27,23 @@ void Missle::choosePayload()
 			}
 
 			if (choice == static_cast<int>(WarHead::EXPLOSIVE)
-				&& numberOfExplosives == 0)
+				&& m_numberOfExplosives == 0)
 			{
 				std::cout << "No Explosive Warheads left." << std::endl << std::endl;
-				noRemainingWarheads = true;
+				m_noRemainingWarheads = true;
 			}
 
 			if (choice == static_cast<int>(WarHead::NUCLEAR)
-				&& numberOfNuclears == 0)
+				&& m_numberOfNuclears == 0)
 			{
 				std::cout << "No Nuclear Warheads left." << std::endl << std::endl;
-				noRemainingWarheads = true;
+				m_noRemainingWarheads = true;
 			}
 		}
 
-		payload = static_cast<WarHead>(choice);
-		coordinates.x = 1;
-		coordinates.y = 1;
+		m_payload = static_cast<WarHead>(choice);
+		m_coordinates.x = 1;
+		m_coordinates.y = 1;
 	}
 }
 
@@ -55,14 +55,14 @@ void Missle::choosePayload()
 void Missle::inputCode()
 {
 	std::cout << "Please enter code for ";
-	if (payload == WarHead::EXPLOSIVE)
+	if (m_payload == WarHead::EXPLOSIVE)
 		std::cout << "explosive ";
 	else
 		std::cout << "nuclear ";
 
 	std::cout << "drone: " << std::endl;
 
-	std::cin >> userCode;
+	std::cin >> m_userCode;
 
 	arm();
 }
@@ -72,29 +72,29 @@ void Missle::inputCode()
 /// </summary>
 void Missle::arm()
 {
-	if (payload == WarHead::EXPLOSIVE) // when the player chose explosive warheads
+	if (m_payload == WarHead::EXPLOSIVE) // when the player chose explosive warheads
 	{
-		if (userCode == explosiveCode) // check to make sure they put in the right code
+		if (m_userCode == m_explosiveCode) // check to make sure they put in the right code
 		{
-			armed = true;
-			numberOfExplosives--;
+			m_armed = true;
+			m_numberOfExplosives--;
 		}
 		else
 		{
-			armed = false;
+			m_armed = false;
 			std::cout << "Drone Error! Wrong Code given. Bombs will be unarmed!!" << std::endl;
 		}
 	}
-	else if (payload == WarHead::NUCLEAR) // if the player chose nuclear
+	else if (m_payload == WarHead::NUCLEAR) // if the player chose nuclear
 	{
-		if (userCode == nuclearCode) // check to make sure they put in the right code
+		if (m_userCode == m_nuclearCode) // check to make sure they put in the right code
 		{
-			armed = true;
-			numberOfNuclears--;
+			m_armed = true;
+			m_numberOfNuclears--;
 		}
 		else
 		{
-			armed = false;
+			m_armed = false;
 			std::cout << "Drone Error! Wrong Code given. Bombs will be unarmed!!" << std::endl;
 		}
 	}
@@ -113,8 +113,8 @@ void Missle::arm()
 void Missle::choosePosition()
 {
 	// reset drone's position for next potential move
-	coordinates.x = 0;
-	coordinates.y = 0;
+	m_coordinates.x = 0;
+	m_coordinates.y = 0;
 
 	int choiceX = -1;
 	int choiceY = -1;
@@ -128,8 +128,8 @@ void Missle::choosePosition()
 	std::cin >> choiceY;
 	std::cout << std::endl;
 
-	target.coordinates.x = choiceX; // set the target's x and y
-	target.coordinates.y = choiceY;
+	m_target.coordinates.x = choiceX; // set the target's x and y
+	m_target.coordinates.y = choiceY;
 }
 
 /// <summary>
@@ -142,20 +142,20 @@ void Missle::choosePosition()
 /// <param name="t_MAX_TARGETS">Max number of enemies/friendlies</param>
 void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_TARGETS)
 {
-	while (coordinates.x != target.coordinates.x ||
-		coordinates.y != target.coordinates.y) // make sure the drone doesn't go outside the range
+	while (m_coordinates.x != m_target.coordinates.x ||
+		m_coordinates.y != m_target.coordinates.y) // make sure the drone doesn't go outside the range
 	{
-		if ((coordinates.x <= 10 && coordinates.y <= 10)
-			&& (target.coordinates.x >= 0 && target.coordinates.y >= 0))
+		if ((m_coordinates.x <= 10 && m_coordinates.y <= 10)
+			&& (m_target.coordinates.x >= 0 && m_target.coordinates.y >= 0))
 		{
-			if (coordinates.x != target.coordinates.x)
+			if (m_coordinates.x != m_target.coordinates.x)
 			{
-				coordinates.x++;
+				m_coordinates.x++;
 			}
 
-			if (coordinates.y != target.coordinates.y)
+			if (m_coordinates.y != m_target.coordinates.y)
 			{
-				coordinates.y++;
+				m_coordinates.y++;
 			}
 
 			checkCollision(t_enemies, t_friendlies, t_MAX_TARGETS);
@@ -165,15 +165,15 @@ void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_T
 			std::cout << "**************************************************" << std::endl;
 			std::cout << "Drone went outside of range. Bombs disarmed. Returning to base..." << std::endl;
 			std::cout << "**************************************************" << std::endl << std::endl;
-			armed = false;
+			m_armed = false;
 			break;
 		}
 		
 	}
 
-	if (coordinates.x == target.coordinates.x && armed)
+	if (m_coordinates.x == m_target.coordinates.x && m_armed)
 	{
-		if (coordinates.y == target.coordinates.y && armed)
+		if (m_coordinates.y == m_target.coordinates.y && m_armed)
 		{
 			std::cout << "Attack finished. Returning to base." << std::endl;;
 			std::cout << std::endl;
@@ -192,16 +192,16 @@ void Missle::update(Target t_enemies[], Target t_friendlies[], int const t_MAX_T
 /// <param name="t_MAX_ENEMIES"></param>
 void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const t_MAX_TARGETS)
 {
-	if (payload == WarHead::EXPLOSIVE && armed)
+	if (m_payload == WarHead::EXPLOSIVE && m_armed)
 	{
 		for (int i = 0; i < t_MAX_TARGETS; i++)
 		{
 			// check to see if the enemy we are attacking is alive first
 			if (t_enemies[i].alive)
 			{
-				if (coordinates.x == t_enemies[i].coordinates.x)
+				if (m_coordinates.x == t_enemies[i].coordinates.x)
 				{
-					if (coordinates.y == t_enemies[i].coordinates.y)
+					if (m_coordinates.y == t_enemies[i].coordinates.y)
 					{
 						std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 							<< t_enemies[i].coordinates.y << std::endl;
@@ -213,9 +213,9 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 			// check to see if the friendly we are attacking is alive first
 			if (t_friendlies[i].alive)
 			{
-				if (coordinates.x == t_friendlies[i].coordinates.x)
+				if (m_coordinates.x == t_friendlies[i].coordinates.x)
 				{
-					if (coordinates.y == t_friendlies[i].coordinates.y)
+					if (m_coordinates.y == t_friendlies[i].coordinates.y)
 					{
 						std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 							<< t_friendlies[i].coordinates.y << std::endl;
@@ -226,11 +226,11 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 		}
 	}
 
-	if (payload == WarHead::NUCLEAR && armed)
+	if (m_payload == WarHead::NUCLEAR && m_armed)
 	{
-		if (coordinates.x == target.coordinates.x)
+		if (m_coordinates.x == m_target.coordinates.x)
 		{
-			if (coordinates.y == target.coordinates.y)
+			if (m_coordinates.y == m_target.coordinates.y)
 			{
 				std::cout << "Reached area. Dropping nuke..." << std::endl;
 				for (int i = 0; i < t_MAX_TARGETS; i++)
@@ -238,8 +238,8 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 					if (t_enemies[i].alive)
 					{
 						// check the area we're attacking first
-						if (t_enemies[i].coordinates.x == target.coordinates.x
-							&& t_enemies[i].coordinates.y == target.coordinates.y)
+						if (t_enemies[i].coordinates.x == m_target.coordinates.x
+							&& t_enemies[i].coordinates.y == m_target.coordinates.y)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
@@ -248,8 +248,8 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 						}
 
 						// then check surrounding areas
-						if (t_enemies[i].coordinates.x == target.coordinates.x + 1
-							|| t_enemies[i].coordinates.x == target.coordinates.x - 1)
+						if (t_enemies[i].coordinates.x == m_target.coordinates.x + 1
+							|| t_enemies[i].coordinates.x == m_target.coordinates.x - 1)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
@@ -257,8 +257,8 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 							continue;
 						}
 
-						if (t_enemies[i].coordinates.y == target.coordinates.y + 1
-							|| t_enemies[i].coordinates.y == target.coordinates.y - 1)
+						if (t_enemies[i].coordinates.y == m_target.coordinates.y + 1
+							|| t_enemies[i].coordinates.y == m_target.coordinates.y - 1)
 						{
 							std::cout << "Enemy hit at " << t_enemies[i].coordinates.x << ", "
 								<< t_enemies[i].coordinates.y << std::endl;
@@ -270,8 +270,8 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 					if (t_friendlies[i].alive)
 					{
 						// check the area we're attacking first
-						if (t_friendlies[i].coordinates.x == target.coordinates.x
-							&& t_friendlies[i].coordinates.y == target.coordinates.y)
+						if (t_friendlies[i].coordinates.x == m_target.coordinates.x
+							&& t_friendlies[i].coordinates.y == m_target.coordinates.y)
 						{
 							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
@@ -280,14 +280,14 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 						}
 
 						// then check surrounding areas
-						if (t_friendlies[i].coordinates.x == target.coordinates.x + 1)
+						if (t_friendlies[i].coordinates.x == m_target.coordinates.x + 1)
 						{
 							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
 						}
-						else if (t_friendlies[i].coordinates.x == target.coordinates.x - 1)
+						else if (t_friendlies[i].coordinates.x == m_target.coordinates.x - 1)
 						{
 							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
@@ -295,14 +295,14 @@ void Missle::checkCollision(Target t_enemies[], Target t_friendlies[], int const
 							continue;
 						}
 
-						if (t_friendlies[i].coordinates.y == target.coordinates.y + 1)
+						if (t_friendlies[i].coordinates.y == m_target.coordinates.y + 1)
 						{
 							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;
 							t_friendlies[i].alive = false;
 							continue;
 						}
-						else if (t_friendlies[i].coordinates.y == target.coordinates.y - 1)
+						else if (t_friendlies[i].coordinates.y == m_target.coordinates.y - 1)
 						{
 							std::cout << "Friendly hit at " << t_friendlies[i].coordinates.x << ", "
 								<< t_friendlies[i].coordinates.y << std::endl;

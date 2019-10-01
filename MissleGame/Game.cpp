@@ -9,7 +9,6 @@
 
 Game::Game()
 {
-	m_exitGame = false;
 }
 Game::~Game()
 {
@@ -63,7 +62,7 @@ void Game::update()
 		playerDrone.choosePayload(); // get the player to choose a warhead
 
 		// make sure that the warhead the player chose is still available
-		if (!playerDrone.noRemainingWarheads)
+		if (!playerDrone.m_noRemainingWarheads)
 		{
 			playerDrone.choosePosition(); // get the player to choose a target
 
@@ -72,7 +71,7 @@ void Game::update()
 				break; // if the player blows themselves up...
 			}
 
-			if (playerDrone.armed) // if the drone is ready to fire
+			if (playerDrone.m_armed) // if the drone is ready to fire
 			{
 				playerDrone.update(enemies, friendlies, MAX_ENEMIES); // fire away
 			} // otherwise just go back around the loop
@@ -91,8 +90,8 @@ bool Game::secretCheck()
 {
 	bool hasLost = false;
 
-	if (playerDrone.target.coordinates.x == 0 &&
-		playerDrone.target.coordinates.y == 0 && playerDrone.armed)
+	if (playerDrone.m_target.coordinates.x == 0 &&
+		playerDrone.m_target.coordinates.y == 0 && playerDrone.m_armed)
 	{
 		std::cout << "You blew yourself up... GAME OVER.";
 		gameState = GameState::QUIT;
@@ -142,8 +141,8 @@ void Game::clearCheck()
 	{ // finally if all friendlies are killed, but not all enemies, they lose.
 		std::cout << "All friendlies dead. You're the last one left..." << std::endl;
 		gameState = GameState::QUIT;
-	} else if (playerDrone.numberOfExplosives == 0
-		&& playerDrone.numberOfNuclears == 0)
+	} else if (playerDrone.m_numberOfExplosives == 0
+		&& playerDrone.m_numberOfNuclears == 0)
 	{
 		int aliveEnemies = 0;
 		int aliveFriendlies = 0;
@@ -169,5 +168,5 @@ void Game::clearCheck()
 		gameState = GameState::QUIT;
 	}
 
-	playerDrone.noRemainingWarheads = false; // reset so player can choose another warhead
+	playerDrone.m_noRemainingWarheads = false; // reset so player can choose another warhead
 }
