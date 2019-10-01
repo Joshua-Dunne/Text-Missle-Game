@@ -17,7 +17,7 @@ void Missle::choosePayload()
 		std::cout << "You have " << numberOfNuclears << " nukes remaining." << std::endl;
 
 		while (choice != 0 && choice != 1)
-		{
+		{ // make sure the player only choose 0 or 1
 			std::cout << "Please choose a Warhead. 0 Explosive, 1 Nuclear: ";
 			std::cin >> choice;
 
@@ -72,9 +72,9 @@ void Missle::inputCode()
 /// </summary>
 void Missle::arm()
 {
-	if (payload == WarHead::EXPLOSIVE)
+	if (payload == WarHead::EXPLOSIVE) // when the player chose explosive warheads
 	{
-		if (userCode == explosiveCode)
+		if (userCode == explosiveCode) // check to make sure they put in the right code
 		{
 			armed = true;
 			numberOfExplosives--;
@@ -85,9 +85,9 @@ void Missle::arm()
 			std::cout << "Drone Error! Wrong Code given. Bombs will be unarmed!!" << std::endl;
 		}
 	}
-	else if (payload == WarHead::NUCLEAR)
+	else if (payload == WarHead::NUCLEAR) // if the player chose nuclear
 	{
-		if (userCode == nuclearCode)
+		if (userCode == nuclearCode) // check to make sure they put in the right code
 		{
 			armed = true;
 			numberOfNuclears--;
@@ -128,7 +128,7 @@ void Missle::choosePosition()
 	std::cin >> choiceY;
 	std::cout << std::endl;
 
-	target.coordinates.x = choiceX;
+	target.coordinates.x = choiceX; // set the target's x and y
 	target.coordinates.y = choiceY;
 }
 

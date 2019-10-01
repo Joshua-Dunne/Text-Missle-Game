@@ -115,12 +115,12 @@ void Game::clearCheck()
 
 		if (!enemies[i].alive)
 		{
-			enemyAliveCheck++;
+			enemyAliveCheck++; // get the number of dead enemies
 		}
 
 		if (!friendlies[i].alive)
 		{
-			friendlyAliveCheck++;
+			friendlyAliveCheck++; // get the number of dead friendlies
 		}
 	}
 
